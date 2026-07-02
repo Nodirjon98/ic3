@@ -131,6 +131,7 @@
         <div class="field"><label>Maktab / Muassasa <em>*</em></label><input name="school" placeholder="45-maktab"><div class="err">Muassasani kiriting</div></div>
         <div class="field"><label>Sinf / Kurs</label><input name="grade" placeholder="6-sinf"></div>
         <div class="field"><label>Imtihon tili <em>*</em></label><select name="exam_lang"><option value="">Tanlang</option><option>English</option><option>Русский</option></select><div class="err">Tilni tanlang</div></div>
+        <div class="field"><label>Imtihon darajasi <em>*</em></label><select name="exam_level"><option value="">Tanlang</option><option>Level 1</option><option>Level 2</option><option>Level 3</option></select><div class="err">Darajani tanlang</div></div>
         <div class="field full-w"><label>Qo'shimcha izoh</label><textarea name="note" rows="2" placeholder="Ixtiyoriy"></textarea></div>
       </div>
       <button type="button" id="submitBtn">Zaxira joyga ro'yxatdan o'tish</button>
@@ -223,7 +224,7 @@ function renderCalendars(){
 
 function validate(f){
   let ok = true;
-  const req = ['last_name','first_name','birth_date','gender','pinfl','passport','phone','region','district','school','exam_lang'];
+  const req = ['last_name','first_name','birth_date','gender','pinfl','passport','phone','region','district','school','exam_lang','exam_level'];
   req.forEach(n=>{
     const inp = f.elements[n];
     const field = inp.closest('.field');
@@ -242,7 +243,7 @@ document.getElementById('submitBtn').onclick = async function(){
 
   this.disabled = true; this.textContent = 'Yuborilmoqda...';
   const payload = { exam_date: selectedDate };
-  ['last_name','first_name','middle_name','birth_date','gender','pinfl','passport','phone','email','region','district','school','grade','exam_lang','note']
+  ['last_name','first_name','middle_name','birth_date','gender','pinfl','passport','phone','email','region','district','school','grade','exam_lang','exam_level','note']
     .forEach(n=>payload[n]=f.elements[n].value.trim());
 
   const { data, error } = await sb.rpc('register_ic3', { payload });
