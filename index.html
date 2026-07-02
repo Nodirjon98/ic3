@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IC3 GS6 — Zaxira ro'yxati | Premier School CATC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0F2A52; --navy-deep:#0A1D3B; --blue:#1D5BBF; --paper:#F6F8FB;
+    --green:#0E9F6E; --red:#F16A6A; --red-d:#D64545; --amber:#B7791F;
+    --ink:#1A2233; --line:#DCE3EE;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);line-height:1.55}
+  h1,h2,h3{font-family:'Sora',sans-serif}
+
+  header{background:var(--navy-deep);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .logo{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--blue),#3FA9F5);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'Sora';font-size:15px}
+  header .t{font-weight:700;font-size:17px}
+  header .s{font-size:12.5px;opacity:.75}
+  .badge{margin-left:auto;font-size:11.5px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);padding:5px 12px;border-radius:99px}
+
+  .hero{background:var(--navy);color:#fff;padding:38px 24px 44px}
+  .wrap{max-width:960px;margin:0 auto}
+  .hero h1{font-size:clamp(24px,4.5vw,38px);font-weight:800;letter-spacing:-.5px;line-height:1.15}
+  .hero h1 span{color:#6FC2FF}
+  .hero p{margin-top:12px;max-width:640px;opacity:.85;font-size:15px}
+
+  main{max-width:960px;margin:0 auto;padding:34px 20px 70px}
+  section{margin-bottom:36px}
+  h2{font-size:20px;font-weight:700;margin-bottom:6px}
+  .sub{font-size:13.5px;color:#5B6779;margin-bottom:18px}
+
+  .cals{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px}
+  .cal{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:20px}
+  .cal h3{font-size:16px;margin-bottom:14px}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
+  .cal-grid .h{font-size:11px;font-weight:600;color:#8A93A5;padding:4px 0}
+  .day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:50%;font-size:13.5px;color:#B6BECD}
+  .day.reserve{background:var(--red);color:#fff;font-weight:600;cursor:pointer;transition:.12s;position:relative}
+  .day.reserve:hover{background:var(--red-d)}
+  .day.reserve .n{font-size:8.5px;font-weight:700;line-height:1;opacity:.9}
+  .day.reserve.selected{box-shadow:0 0 0 3px var(--navy);background:var(--navy)}
+  .day.soldout{background:#E8EBF1;color:#B6BECD;cursor:not-allowed;text-decoration:line-through}
+  .legend{display:flex;gap:18px;margin-top:16px;font-size:12px;color:#5B6779;flex-wrap:wrap}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+
+  .picked{background:#FFF8ED;border:1.5px solid #F0DDB8;border-radius:12px;padding:12px 16px;font-size:14px;margin-top:18px;display:none}
+  .picked.show{display:block}
+  .picked b{font-family:'Sora'}
+
+  form{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:26px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+  label{display:block;font-size:12.5px;font-weight:600;margin-bottom:5px;color:#39445A}
+  label em{color:var(--red-d);font-style:normal}
+  input,select,textarea{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:9px;font:inherit;font-size:14px;background:#FBFCFE}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);background:#fff}
+  .full-w{grid-column:1/-1}
+  .err{color:var(--red-d);font-size:12px;margin-top:4px;display:none}
+  .field.invalid input,.field.invalid select{border-color:var(--red-d)}
+  .field.invalid .err{display:block}
+
+  button{font-family:'Sora';font-weight:700;font-size:15px;background:var(--blue);color:#fff;border:none;border-radius:10px;padding:14px 28px;cursor:pointer;margin-top:22px;width:100%;transition:.15s}
+  button:hover{background:#164A9E}
+  button:disabled{background:#9FB4D4;cursor:not-allowed}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy-deep);color:#fff;padding:14px 22px;border-radius:12px;font-size:14px;display:none;max-width:90%;text-align:center;z-index:9}
+  .toast.show{display:block;animation:up .3s}
+  @keyframes up{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+
+  .success{background:#fff;border:1.5px solid var(--green);border-radius:16px;padding:34px;text-align:center;display:none}
+  .success.show{display:block}
+  .success .ic{font-size:44px}
+  .success h3{font-size:20px;margin:10px 0 6px}
+  .success p{font-size:14px;color:#5B6779}
+  .success .code{font-family:'Sora';font-weight:800;font-size:22px;letter-spacing:2px;color:var(--navy);background:var(--paper);border:1.5px dashed var(--line);border-radius:10px;padding:12px;margin:16px auto;max-width:280px}
+
+  footer{background:var(--navy-deep);color:rgba(255,255,255,.7);font-size:13px;text-align:center;padding:22px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">PS</div>
+  <div>
+    <div class="t">Premier School</div>
+    <div class="s">Certiport Authorized Testing Center · Toshkent</div>
+  </div>
+  <div class="badge">IC3 Digital Literacy · GS6</div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <h1>To'lgan sanalarga <span>zaxira joy</span> oling</h1>
+    <p>Certiport.uz da qizil bilan belgilangan (to'lgan) imtihon kunlari uchun Premier School har bir sanaga <b>3 ta qo'shimcha o'rin</b> ajratadi. Sanani tanlang va ro'yxatdan o'ting.</p>
+  </div>
+</div>
+
+<main>
+  <section>
+    <h2>1 — Imtihon sanasini tanlang</h2>
+    <p class="sub">Faqat qizil sanalar tanlanadi — bular certiport.uz da to'lgan, Premier School zaxirasi ochiq kunlar.</p>
+    <div class="cals" id="cals"></div>
+    <div class="legend">
+      <span><i style="background:var(--red)"></i>Zaxira joy bor</span>
+      <span><i style="background:#E8EBF1"></i>Zaxira tugagan</span>
+      <span><i style="background:#F3F5F9;border:1px solid var(--line)"></i>Certiport.uz orqali ochiq</span>
+    </div>
+    <div class="picked" id="picked"></div>
+  </section>
+
+  <section id="formSection">
+    <h2>2 — Shaxsiy ma'lumotlar</h2>
+    <p class="sub">Barcha maydonlar pasport/ID hujjatidagi kabi lotin alifbosida to'ldirilsin.</p>
+    <form id="regForm" novalidate>
+      <div class="grid">
+        <div class="field"><label>Familiya <em>*</em></label><input name="last_name" placeholder="ALIYEV"><div class="err">Familiyani kiriting</div></div>
+        <div class="field"><label>Ism <em>*</em></label><input name="first_name" placeholder="ALISHER"><div class="err">Ismni kiriting</div></div>
+        <div class="field"><label>Otasining ismi</label><input name="middle_name" placeholder="AKMAL O'G'LI"></div>
+        <div class="field"><label>Tug'ilgan sana <em>*</em></label><input type="date" name="birth_date"><div class="err">Sanani tanlang</div></div>
+        <div class="field"><label>Jinsi <em>*</em></label><select name="gender"><option value="">Tanlang</option><option>Erkak</option><option>Ayol</option></select><div class="err">Jinsni tanlang</div></div>
+        <div class="field"><label>JSHSHIR (PINFL) <em>*</em></label><input name="pinfl" maxlength="14" inputmode="numeric" placeholder="14 raqam"><div class="err">14 raqamli JSHSHIR kiriting</div></div>
+        <div class="field"><label>Pasport / ID seriya va raqami <em>*</em></label><input name="passport" placeholder="AD1234567"><div class="err">Hujjat raqamini kiriting</div></div>
+        <div class="field"><label>Telefon raqami <em>*</em></label><input name="phone" inputmode="tel" placeholder="+998 90 123 45 67"><div class="err">Telefon raqamini kiriting</div></div>
+        <div class="field"><label>Email</label><input type="email" name="email" placeholder="misol@mail.com"></div>
+        <div class="field"><label>Viloyat <em>*</em></label><select name="region"><option value="">Tanlang</option><option>Toshkent shahri</option><option>Toshkent viloyati</option><option>Andijon</option><option>Buxoro</option><option>Farg'ona</option><option>Jizzax</option><option>Xorazm</option><option>Namangan</option><option>Navoiy</option><option>Qashqadaryo</option><option>Qoraqalpog'iston</option><option>Samarqand</option><option>Sirdaryo</option><option>Surxondaryo</option></select><div class="err">Viloyatni tanlang</div></div>
+        <div class="field"><label>Tuman / Shahar <em>*</em></label><input name="district" placeholder="Chilonzor tumani"><div class="err">Tumanni kiriting</div></div>
+        <div class="field"><label>Maktab / Muassasa <em>*</em></label><input name="school" placeholder="45-maktab"><div class="err">Muassasani kiriting</div></div>
+        <div class="field"><label>Sinf / Kurs</label><input name="grade" placeholder="6-sinf"></div>
+        <div class="field"><label>Imtihon tili <em>*</em></label><select name="exam_lang"><option value="">Tanlang</option><option>English</option><option>Русский</option></select><div class="err">Tilni tanlang</div></div>
+        <div class="field full-w"><label>Qo'shimcha izoh</label><textarea name="note" rows="2" placeholder="Ixtiyoriy"></textarea></div>
+      </div>
+      <button type="button" id="submitBtn">Zaxira joyga ro'yxatdan o'tish</button>
+    </form>
+  </section>
+
+  <div class="success" id="success">
+    <div class="ic">✅</div>
+    <h3>Ariza qabul qilindi!</h3>
+    <p>Ro'yxat raqamingizni saqlab qo'ying. Administrator siz bilan tasdiqlash uchun bog'lanadi.</p>
+    <div class="code" id="regCode"></div>
+    <p id="successDate"></p>
+  </div>
+</main>
+
+<footer>Premier School CATC · Certiport Authorized Testing Center · Toshkent, O'zbekiston</footer>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const sb = supabase.createClient(
+  'https://yezxdimzyfvvadqawogt.supabase.co',
+  'sb_publishable_92p6JVwW92iBb7kn_1dIbA_EuJwddrH'
+);
+
+const WD = ['Yakshanba','Dushanba','Seshanba','Chorshanba','Payshanba','Juma','Shanba'];
+const MO = ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentyabr','Oktyabr','Noyabr','Dekabr'];
+let slotsMap = {};   // { '2026-07-09': remaining }
+let selectedDate = null;
+
+function fmt(d){ const x=new Date(d+'T00:00:00'); return x.getDate()+'-'+MO[x.getMonth()].toLowerCase()+' '+x.getFullYear(); }
+function wd(d){ return WD[new Date(d+'T00:00:00').getDay()]; }
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3500);
+}
+
+async function loadSlots(){
+  const { data, error } = await sb.rpc('get_ic3_slots');
+  if(error){ toast('Ma\'lumotlarni yuklashda xatolik'); console.error(error); return; }
+  slotsMap = {};
+  data.forEach(r => slotsMap[r.exam_date] = r.remaining);
+  renderCalendars();
+}
+
+function renderCalendars(){
+  const dates = Object.keys(slotsMap).sort();
+  if(!dates.length){ document.getElementById('cals').innerHTML='<p class="sub">Hozircha ochiq sanalar yo\'q.</p>'; return; }
+  const months = [...new Set(dates.map(d=>d.slice(0,7)))];
+  const el = document.getElementById('cals');
+  el.innerHTML = '';
+  months.forEach(ym=>{
+    const [y,m] = ym.split('-').map(Number);
+    const first = new Date(y, m-1, 1);
+    const daysIn = new Date(y, m, 0).getDate();
+    const cal = document.createElement('div');
+    cal.className = 'cal';
+    let html = `<h3>${MO[m-1]} ${y}</h3><div class="cal-grid">`;
+    ['S','M','T','W','T','F','S'].forEach(h=>html+=`<div class="h">${h}</div>`);
+    for(let i=0;i<first.getDay();i++) html += '<div></div>';
+    for(let d=1;d<=daysIn;d++){
+      const iso = ym+'-'+String(d).padStart(2,'0');
+      if(slotsMap[iso] !== undefined){
+        const rem = slotsMap[iso];
+        if(rem > 0){
+          html += `<div class="day reserve${selectedDate===iso?' selected':''}" data-d="${iso}">${d}<span class="n">${rem} joy</span></div>`;
+        } else {
+          html += `<div class="day soldout">${d}</div>`;
+        }
+      } else {
+        html += `<div class="day">${d}</div>`;
+      }
+    }
+    html += '</div>';
+    cal.innerHTML = html;
+    el.appendChild(cal);
+  });
+  document.querySelectorAll('.day.reserve').forEach(n=>{
+    n.onclick = ()=>{
+      selectedDate = n.dataset.d;
+      renderCalendars();
+      const p = document.getElementById('picked');
+      p.innerHTML = `Tanlangan sana: <b>${fmt(selectedDate)}</b> (${wd(selectedDate)}) · qolgan joy: <b>${slotsMap[selectedDate]}</b>`;
+      p.classList.add('show');
+      document.getElementById('formSection').scrollIntoView({behavior:'smooth'});
+    };
+  });
+}
+
+function validate(f){
+  let ok = true;
+  const req = ['last_name','first_name','birth_date','gender','pinfl','passport','phone','region','district','school','exam_lang'];
+  req.forEach(n=>{
+    const inp = f.elements[n];
+    const field = inp.closest('.field');
+    let bad = !inp.value.trim();
+    if(n==='pinfl' && !/^\d{14}$/.test(inp.value.trim())) bad = true;
+    field.classList.toggle('invalid', bad);
+    if(bad) ok = false;
+  });
+  return ok;
+}
+
+document.getElementById('submitBtn').onclick = async function(){
+  if(!selectedDate){ toast('Avval imtihon sanasini tanlang'); document.getElementById('cals').scrollIntoView({behavior:'smooth'}); return; }
+  const f = document.getElementById('regForm');
+  if(!validate(f)){ toast("Belgilangan maydonlarni to'ldiring"); return; }
+
+  this.disabled = true; this.textContent = 'Yuborilmoqda...';
+  const payload = { exam_date: selectedDate };
+  ['last_name','first_name','middle_name','birth_date','gender','pinfl','passport','phone','email','region','district','school','grade','exam_lang','note']
+    .forEach(n=>payload[n]=f.elements[n].value.trim());
+
+  const { data, error } = await sb.rpc('register_ic3', { payload });
+  this.disabled = false; this.textContent = "Zaxira joyga ro'yxatdan o'tish";
+
+  if(error){
+    const m = error.message || '';
+    if(m.includes('FULL')) toast('Afsuski, bu sanada zaxira joylar tugadi');
+    else if(m.includes('BAD_PINFL')) toast("JSHSHIR noto'g'ri — 14 raqam bo'lishi kerak");
+    else if(m.includes('BAD_DATE')) toast("Sana noto'g'ri, qaytadan tanlang");
+    else toast('Xatolik yuz berdi, qayta urinib ko\'ring');
+    loadSlots();
+    return;
+  }
+
+  document.getElementById('regCode').textContent = data;
+  document.getElementById('successDate').textContent = 'Imtihon sanasi: ' + fmt(selectedDate) + ' (' + wd(selectedDate) + '), 10:00';
+  document.getElementById('formSection').style.display='none';
+  document.getElementById('success').classList.add('show');
+  document.getElementById('success').scrollIntoView({behavior:'smooth'});
+  loadSlots();
+};
+
+loadSlots();
+</script>
+</body>
+</html>
