@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — IC3 GS6 Arizalar</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#0F2A52;--navy-deep:#0A1D3B;--blue:#1D5BBF;--paper:#F6F8FB;--green:#0E9F6E;--red:#D64545;--amber:#B7791F;--ink:#1A2233;--line:#DCE3EE}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);font-size:14px}
+  h1,h2,h3{font-family:'Sora'}
+  header{background:var(--navy-deep);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:12px}
+  header h1{font-size:17px}
+  header .r{margin-left:auto;display:flex;gap:10px}
+  main{max-width:1200px;margin:0 auto;padding:26px 20px 60px}
+
+  .login{max-width:380px;margin:80px auto;background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:30px;text-align:center}
+  .login h2{font-size:18px;margin-bottom:16px}
+  input,select,textarea{padding:10px 12px;border:1.5px solid var(--line);border-radius:9px;font:inherit;background:#FBFCFE;width:100%}
+  input:focus,select:focus{outline:none;border-color:var(--blue)}
+  .btn{font-family:'Sora';font-weight:700;background:var(--blue);color:#fff;border:none;border-radius:9px;padding:10px 18px;cursor:pointer;font-size:13.5px}
+  .btn:hover{background:#164A9E}
+  .btn.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--line)}
+  .btn.danger{background:var(--red)}
+  .btn.danger:hover{background:#B93A3A}
+  .login .btn{width:100%;margin-top:12px}
+  .login .msg{color:var(--red);font-size:12.5px;margin-top:10px;display:none}
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px}
+  .stat{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:14px}
+  .stat b{font-family:'Sora';font-size:24px;display:block}
+  .stat span{font-size:12px;color:#5B6779}
+  .stat.warn{border-color:var(--red)}
+  .stat.warn b{color:var(--red)}
+
+  .bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+  .bar input,.bar select{width:auto;min-width:160px}
+  .chip{font-size:12px;font-weight:600;padding:6px 12px;border-radius:99px;border:1.5px solid var(--line);background:#fff;cursor:pointer}
+  .chip.on{background:var(--red);border-color:var(--red);color:#fff}
+
+  .dates-summary{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+  .dchip{font-size:12px;padding:6px 10px;border-radius:8px;background:#fff;border:1.5px solid var(--line);cursor:pointer}
+  .dchip.full{border-color:var(--amber);background:#FDF3E2}
+  .dchip.over{border-color:var(--red);background:#FBEAEA;font-weight:700}
+  .dchip.sel{outline:2px solid var(--blue)}
+
+  .tbl{background:#fff;border:1.5px solid var(--line);border-radius:12px;overflow:auto}
+  table{border-collapse:collapse;width:100%;min-width:1200px}
+  th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap;font-size:13px}
+  th{background:var(--paper);font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;color:#5B6779;position:sticky;top:0}
+  tr.over td{background:#FBEAEA}
+  .lvl{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:#E8F0FE;color:var(--blue)}
+  .empty{padding:40px;text-align:center;color:#8A93A5}
+  .act{display:flex;gap:6px}
+  .act button{background:none;border:1.5px solid var(--line);border-radius:7px;padding:4px 8px;cursor:pointer;font-size:13px}
+  .act button:hover{border-color:var(--blue)}
+  .act button.del:hover{border-color:var(--red)}
+
+  .overlay{position:fixed;inset:0;background:rgba(10,29,59,.5);display:none;align-items:flex-start;justify-content:center;padding:30px 16px;overflow:auto;z-index:20}
+  .overlay.show{display:flex}
+  .modal{background:#fff;border-radius:16px;padding:24px;max-width:640px;width:100%}
+  .modal h3{font-size:17px;margin-bottom:16px}
+  .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:600px){.mgrid{grid-template-columns:1fr}}
+  .mgrid label{display:block;font-size:11.5px;font-weight:600;margin-bottom:4px;color:#39445A}
+  .mfoot{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+  .full-w{grid-column:1/-1}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy-deep);color:#fff;padding:13px 20px;border-radius:12px;font-size:13.5px;display:none;z-index:30}
+  .toast.show{display:block}
+</style>
+</head>
+<body>
+
+<div class="login" id="login">
+  <h2>🔐 Admin panel</h2>
+  <input type="password" id="secret" placeholder="Maxfiy kalit">
+  <button class="btn" onclick="doLogin()">Kirish</button>
+  <div class="msg" id="loginMsg">Kalit noto'g'ri</div>
+</div>
+
+<div id="panel" style="display:none">
+<header>
+  <h1>IC3 GS6 — Arizalar</h1>
+  <div class="r">
+    <button class="btn ghost" onclick="load()">↻ Yangilash</button>
+    <button class="btn ghost" onclick="downloadCSV()">⬇ CSV</button>
+  </div>
+</header>
+<main>
+  <div class="stats" id="stats"></div>
+  <div class="dates-summary" id="dsum"></div>
+  <div class="bar">
+    <input id="q" placeholder="Qidirish: ism, telefon, JSHSHIR, kod..." oninput="render()">
+    <select id="fLevel" onchange="render()">
+      <option value="">Barcha darajalar</option>
+      <option>Level 1</option><option>Level 2</option><option>Level 3</option>
+    </select>
+    <button class="chip" id="fOver" onclick="toggleOver()">Faqat 3 tadan ortiq sanalar</button>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>#</th><th>Kod</th><th>Sana</th><th>Daraja</th><th>F.I.Sh.</th><th>Tug'ilgan</th><th>JSHSHIR</th><th>Pasport</th><th>Telefon</th><th>Viloyat</th><th>Maktab</th><th>Til</th><th>Vaqt</th><th>Amallar</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div class="empty" id="empty" style="display:none">Arizalar topilmadi</div>
+  </div>
+</main>
+</div>
+
+<div class="overlay" id="editOverlay">
+  <div class="modal">
+    <h3>✏️ Tahrirlash — <span id="editCode"></span></h3>
+    <div class="mgrid">
+      <div><label>Imtihon sanasi</label><input type="date" id="e_exam_date"></div>
+      <div><label>Daraja</label><select id="e_exam_level"><option>Level 1</option><option>Level 2</option><option>Level 3</option></select></div>
+      <div><label>Familiya</label><input id="e_last_name"></div>
+      <div><label>Ism</label><input id="e_first_name"></div>
+      <div><label>Otasining ismi</label><input id="e_middle_name"></div>
+      <div><label>Tug'ilgan sana</label><input type="date" id="e_birth_date"></div>
+      <div><label>Jinsi</label><select id="e_gender"><option>Erkak</option><option>Ayol</option></select></div>
+      <div><label>JSHSHIR</label><input id="e_pinfl" maxlength="14"></div>
+      <div><label>Pasport</label><input id="e_passport"></div>
+      <div><label>Telefon</label><input id="e_phone"></div>
+      <div><label>Email</label><input id="e_email"></div>
+      <div><label>Viloyat</label><input id="e_region"></div>
+      <div><label>Tuman</label><input id="e_district"></div>
+      <div><label>Maktab</label><input id="e_school"></div>
+      <div><label>Sinf</label><input id="e_grade"></div>
+      <div><label>Til</label><select id="e_exam_lang"><option>English</option><option>Русский</option></select></div>
+      <div class="full-w"><label>Izoh</label><input id="e_note"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn ghost" onclick="closeEdit()">Bekor qilish</button>
+      <button class="btn" onclick="saveEdit()">Saqlash</button>
+    </div>
+  </div>
+</div>
+
+<footer></footer>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const sb = supabase.createClient(
+  'https://yezxdimzyfvvadqawogt.supabase.co',
+  'sb_publishable_92p6JVwW92iBb7kn_1dIbA_EuJwddrH'
+);
+const CAP = 3;
+const FIELDS = ['exam_date','exam_level','last_name','first_name','middle_name','birth_date','gender','pinfl','passport','phone','email','region','district','school','grade','exam_lang','note'];
+let SECRET = '';
+let all = [];
+let selDate = null, onlyOver = false, editing = null;
+
+const mem = {};
+const store = {
+  get k(){ try{return sessionStorage.getItem('adm')}catch(e){return mem.adm||null} },
+  set(v){ try{sessionStorage.setItem('adm',v)}catch(e){mem.adm=v} }
+};
+
+function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+
+async function fetchAll(secret){
+  const { data, error } = await sb.rpc('export_ic3_reservations', { p_secret: secret });
+  if(error) throw error;
+  return data;
+}
+
+async function doLogin(){
+  const s = document.getElementById('secret').value.trim();
+  try{
+    all = await fetchAll(s);
+    SECRET = s; store.set(s);
+    document.getElementById('login').style.display='none';
+    document.getElementById('panel').style.display='block';
+    render();
+  }catch(e){ document.getElementById('loginMsg').style.display='block'; }
+}
+
+async function load(){
+  try{ all = await fetchAll(SECRET); render(); }catch(e){ toast('Yuklashda xatolik'); }
+}
+
+function counts(){ const c={}; all.forEach(r=>c[r.exam_date]=(c[r.exam_date]||0)+1); return c; }
+function toggleOver(){ onlyOver=!onlyOver; document.getElementById('fOver').classList.toggle('on',onlyOver); render(); }
+
+function render(){
+  const c = counts();
+  const overDates = new Set(Object.keys(c).filter(d=>c[d]>CAP));
+  const fullDates = new Set(Object.keys(c).filter(d=>c[d]===CAP));
+
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><b>${all.length}</b><span>Jami arizalar</span></div>
+    <div class="stat"><b>${Object.keys(c).length}</b><span>Band sanalar</span></div>
+    <div class="stat"><b>${fullDates.size}</b><span>To'lgan (3/3)</span></div>
+    <div class="stat ${overDates.size?'warn':''}"><b>${overDates.size}</b><span>3 tadan ortiq</span></div>`;
+
+  document.getElementById('dsum').innerHTML = Object.keys(c).sort().map(d=>{
+    const cls = c[d]>CAP?'over':(c[d]===CAP?'full':'');
+    return `<span class="dchip ${cls} ${selDate===d?'sel':''}" onclick="selDate=selDate==='${d}'?null:'${d}';render()">${d} · ${c[d]}/${CAP}</span>`;
+  }).join('');
+
+  const q = document.getElementById('q').value.toLowerCase();
+  const lvl = document.getElementById('fLevel').value;
+  let rows = all.filter(r=>{
+    if(selDate && r.exam_date!==selDate) return false;
+    if(onlyOver && !overDates.has(r.exam_date)) return false;
+    if(lvl && r.exam_level!==lvl) return false;
+    if(q){
+      const hay = [r.code,r.last_name,r.first_name,r.middle_name,r.phone,r.pinfl,r.passport,r.school].join(' ').toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  document.getElementById('rows').innerHTML = rows.map((r,i)=>`
+    <tr class="${overDates.has(r.exam_date)?'over':''}">
+      <td>${i+1}</td><td><b>${r.code}</b></td><td>${r.exam_date}</td>
+      <td><span class="lvl">${r.exam_level||''}</span></td>
+      <td>${r.last_name} ${r.first_name} ${r.middle_name||''}</td>
+      <td>${r.birth_date}</td><td>${r.pinfl}</td><td>${r.passport}</td>
+      <td>${r.phone}</td><td>${r.region}</td><td>${r.school}</td>
+      <td>${r.exam_lang}</td><td>${(r.created_at||'').slice(0,16).replace('T',' ')}</td>
+      <td class="act">
+        <button onclick="openEdit('${r.code}')" title="Tahrirlash">✏️</button>
+        <button class="del" onclick="delRow('${r.code}')" title="O'chirish">🗑</button>
+      </td>
+    </tr>`).join('');
+  document.getElementById('empty').style.display = rows.length?'none':'block';
+}
+
+function openEdit(code){
+  editing = all.find(r=>r.code===code);
+  if(!editing) return;
+  document.getElementById('editCode').textContent = code;
+  FIELDS.forEach(f=>{
+    const el = document.getElementById('e_'+f);
+    if(el) el.value = editing[f] ?? '';
+  });
+  document.getElementById('editOverlay').classList.add('show');
+}
+function closeEdit(){ document.getElementById('editOverlay').classList.remove('show'); editing=null; }
+
+async function saveEdit(){
+  if(!editing) return;
+  const fields = {};
+  FIELDS.forEach(f=>{
+    const el = document.getElementById('e_'+f);
+    if(!el) return;
+    const v = el.value.trim();
+    if(v !== String(editing[f] ?? '')) fields[f] = v;
+  });
+  if(!Object.keys(fields).length){ closeEdit(); return; }
+  const { error } = await sb.rpc('admin_update_ic3', { p_secret: SECRET, p_code: editing.code, p_fields: fields });
+  if(error){
+    const m = error.message||'';
+    if(m.includes('FULL')) toast('Bu sanada joy yo\'q (3/3)');
+    else if(m.includes('DUPLICATE')) toast('Bu JSHSHIR shu darajaga allaqachon yozilgan');
+    else if(m.includes('BAD_PINFL')) toast('JSHSHIR 14 raqam bo\'lishi kerak');
+    else if(m.includes('BAD_DATE')) toast('Bunday imtihon sanasi yo\'q');
+    else toast('Xatolik: '+m);
+    return;
+  }
+  toast('Saqlandi ✓');
+  closeEdit();
+  load();
+}
+
+async function delRow(code){
+  const r = all.find(x=>x.code===code);
+  if(!confirm(`${code} — ${r.last_name} ${r.first_name} arizasini o'chirasizmi? Qaytarib bo'lmaydi.`)) return;
+  const { error } = await sb.rpc('admin_delete_ic3', { p_secret: SECRET, p_code: code });
+  if(error){ toast('O\'chirishda xatolik'); return; }
+  toast('O\'chirildi ✓');
+  load();
+}
+
+function downloadCSV(){
+  const keys = ['code','exam_date','exam_level','last_name','first_name','middle_name','birth_date','gender','pinfl','passport','phone','email','region','district','school','grade','exam_lang','note','created_at'];
+  const esc = v => { const s = v==null?'':String(v); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
+  const csv = [keys.join(',')].concat(all.map(r=>keys.map(k=>esc(r[k])).join(','))).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));
+  a.download = 'ic3-arizalar.csv';
+  a.click();
+}
+
+(async ()=>{
+  const saved = store.k;
+  if(saved){
+    try{ all = await fetchAll(saved); SECRET = saved;
+      document.getElementById('login').style.display='none';
+      document.getElementById('panel').style.display='block';
+      render();
+    }catch(e){}
+  }
+})();
+document.getElementById('secret').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+</script>
+</body>
+</html>
